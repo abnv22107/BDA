@@ -1,0 +1,25 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+
+# Problem endpoints
+POST    /api/problems                      controllers.ProblemController.createProblem
+GET     /api/problems/:id                  controllers.ProblemController.getProblem(id: String)
+GET     /api/problems                      controllers.ProblemController.listProblems(difficulty: Option[String], tags: Option[String], page: Int ?= 1, pageSize: Int ?= 20)
+PUT     /api/problems/:id                  controllers.ProblemController.updateProblem(id: String)
+POST    /api/problems/:id/submit           controllers.ProblemController.submitSolution(id: String)
+
+# Contest endpoints
+POST    /api/contests                      controllers.ContestController.createContest
+GET     /api/contests/:id                  controllers.ContestController.getContest(id: String)
+GET     /api/contests/active               controllers.ContestController.getActiveContests
+POST    /api/contests/:id/register         controllers.ContestController.registerForContest(id: String)
+POST    /api/contests/:contestId/problems/:problemId/submit  controllers.ContestController.submitContestSolution(contestId: String, problemId: String)
+GET     /api/contests/:id/leaderboard      controllers.ContestController.getContestLeaderboard(id: String)
+
+# Analytics endpoints
+GET     /api/users/:id/performance         controllers.AnalyticsController.getUserPerformance(id: String)
+GET     /api/users/:id/insights            controllers.AnalyticsController.getUserInsights(id: String)
+GET     /api/users/:id/recommendations     controllers.AnalyticsController.getRecommendedProblems(id: String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset) 

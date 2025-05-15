@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "9000:9000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/competitive_platform
+      - PLAY_HTTP_SECRET_KEY=changeme
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro
+    networks:
+      - app-network
+
+  code-runner:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.scala
+    volumes:
+      - code_execution:/code
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:9000
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  code_execution: 
